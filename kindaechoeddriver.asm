@@ -43,11 +43,9 @@
 // recommend people use the PRG format over the SID format.
 // I have included the ROMs for your convenience. If VICE can do it,
 // why can I not? Put them in the same folder as sidplayfp.
-// ----------------------------------------------------------------
-
-.const base_zp		= $e5 // GT2 base ghost zp (set to whatever your song uses)
+// ----------------------------------------------------------------
 .const base_play	= $1000 // GT2 base player address (set to whatever your song uses)
-.const play_d418	= base_zp+$18 // 19f8
+.const play_d418	= $d418
 .const irqzero		= $40
 
 *= $0801 
@@ -75,18 +73,8 @@ start:
 	cli
 
 	jsr init_sid_nmi
-	jsr set_sid_zp
 hold:
 	jmp hold
-
-set_sid_zp:
-	ldx #$17
-copy:
-	lda base_zp,x
-	sta $d400,x
-	dex
-	bpl copy
-	rts
 
 init_sid_nmi:
 	lda #$40
@@ -189,8 +177,7 @@ irq:
 	jsr $1003
 	lda play_d418
 	and #$f0
-	sta nmi_band+1
-	jsr set_sid_zp
+	sta nmi_band+1
 	jmp $ea31
 
 //-----------------------------
